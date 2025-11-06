@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Container, Row, Col, Button, Form, Table, Alert } from "react-bootstrap";
-import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaMoon, FaSun } from "react-icons/fa";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Table,
+  Alert,
+} from "react-bootstrap";
+import {
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaMoon,
+  FaSun,
+} from "react-icons/fa";
 
 const StudentForm = () => {
   const [queries, setQueries] = useState([]);
@@ -16,26 +30,32 @@ const StudentForm = () => {
     fetchQueries();
   }, []);
 
+  // ✅ Fetch all queries
   const fetchQueries = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/queries");
-      setQueries(res.data);
+      const res = await axios.get("/api/queries");
+      console.log("✅ API response:", res.data);
+      // Fix: Ensure always an array
+      const data = Array.isArray(res.data)
+        ? res.data
+        : res.data.queries || [];
+      setQueries(data);
     } catch (err) {
       console.error("❌ Error fetching queries:", err.message);
+      setQueries([]);
     }
   };
 
   // ✅ Submit new query
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!fullName || !topic || !question) {
       setMessage({ type: "danger", text: "⚠️ Please fill all fields" });
       return;
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/queries", {
+      const res = await axios.post("/api/queries", {
         fullName,
         topic,
         question,
@@ -59,16 +79,14 @@ const StudentForm = () => {
   // ✅ Delete query
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this query?")) return;
-
     try {
-      await axios.delete(`http://localhost:5000/api/queries/${id}`);
+      await axios.delete(`/api/queries/${id}`);
       setMessage({ type: "success", text: "🗑️ Query deleted successfully!" });
       fetchQueries();
     } catch (err) {
       console.error("❌ Error deleting query:", err.message);
       setMessage({ type: "danger", text: "⚠️ Failed to delete query." });
     }
-
     setTimeout(() => setMessage(null), 3000);
   };
 
@@ -80,7 +98,7 @@ const StudentForm = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/queries/${id}`, { reply });
+      await axios.put(`/api/queries/${id}`, { reply });
       setReply("");
       setMessage({ type: "success", text: "✅ Reply added successfully!" });
       fetchQueries();
@@ -235,7 +253,7 @@ const StudentForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {queries.length === 0 ? (
+                {!Array.isArray(queries) || queries.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="text-center text-muted">
                       No queries found

@@ -16,7 +16,7 @@ mongoose
   .catch((err) => console.error("❌ MongoDB connection error:", err.message));
 
 // ✅ Routes
-const queryRoutes = require("./routes/queryRoutes");
+const queryRoutes = require("./routes/queryRoutes.js");
 app.use("/api/queries", queryRoutes);
 
 // ✅ Start Server

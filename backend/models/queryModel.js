@@ -1,26 +1,11 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const querySchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    required: true,
-  },
-  topic: {
-    type: String,
-    required: true,
-  },
-  question: {
-    type: String,
-    required: true,
-  },
-  reply: {
-    type: String,
-    default: "",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  fullName: { type: String, required: true },
+  topic: { type: String, required: true },
+  question: { type: String, required: true },
+  reply: { type: String, default: "" },
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Query", querySchema);
+export default mongoose.models.Query || mongoose.model("Query", querySchema);
